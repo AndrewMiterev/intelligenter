@@ -33,7 +33,7 @@ export const initializeDatabase = async () => {
         await client.query(`
             CREATE INDEX IF NOT EXISTS idx_domains_last_analyzed
                 ON domains (last_analyzed) WHERE status = 'completed';
-        `);hardcoded
+        `);
 
         // Create requests table
         await client.query(`
