@@ -112,8 +112,8 @@ export class DomainService {
                 );
             } else {
                 await client.query(
-                    `INSERT INTO domains (domain_name, status) 
-           VALUES ($1, 'analyzing')`,
+                    `INSERT INTO domains (domain_name, status)
+                     VALUES ($1, 'analyzing')`,
                     [domainName]
                 );
             }
@@ -192,14 +192,37 @@ export class DomainService {
         const client = await pool.connect();
         try {
             const result = await client.query(
-                `SELECT * FROM domains 
-         WHERE status = 'completed' 
-         AND (last_analyzed IS NULL OR last_analyzed < NOW() - INTERVAL '1 month')
-         ORDER BY last_analyzed
-         LIMIT $1 OFFSET $2`,
+                `SELECT * FROM domains
+                 WHERE status = 'completed'
+                   AND (last_analyzed IS NULL OR last_analyzed < NOW() - INTERVAL '1 month')
+                 ORDER BY last_analyzed NULLS FIRST
+                 LIMIT $1 OFFSET $2`,
                 [batchSize, offset]
             );
             return result.rows;
+        } finally {
+            client.release();
+        }
+    }
+
+    async isAnalysisStale(domainName: string): Promise<boolean> {
+        const client = await pool.connect();
+        try {
+            const result = await client.query(
+                `SELECT last_analyzed FROM domains 
+                 WHERE domain_name = $1 AND status = 'completed'`,
+                [domainName]
+            );
+
+            if (result.rows.length === 0) return true;
+
+            const lastAnalyzed = result.rows[0].last_analyzed;
+            if (!lastAnalyzed) return true;
+
+            // Consider stale if older than 1 day
+            const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+            return lastAnalyzed < oneDayAgo;
+
         } finally {
             client.release();
         }
