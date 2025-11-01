@@ -4,8 +4,8 @@ import logger from '../utils/logger';
 import {VirusTotalData} from "../models/domain";
 
 export class VirusTotalService {
-    private apiKey: string;
-    private axiosInstance: any;
+    private readonly apiKey: string;
+    private readonly axiosInstance: any;
 
     constructor() {
         this.apiKey = process.env.VIRUSTOTAL_API_KEY || '';
@@ -65,7 +65,7 @@ export class VirusTotalService {
         };
     }
 
-    private getMockData(domain: string): VirusTotalData {
+    private getMockData(_domain: string): VirusTotalData {
         return {
             numberOfDetection: Math.floor(Math.random() * 5),
             numberOfScanners: 70,

@@ -1,7 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import cors from 'cors';  // ? i don't know - miss in requirements
+import cors from 'cors';  // ? I don't know - miss in requirements
 import domainRoutes from './routes/domainRoutes';
 import logger from './utils/logger';
 

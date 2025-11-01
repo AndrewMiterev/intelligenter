@@ -184,7 +184,7 @@ export class DomainService {
                 `SELECT * FROM domains 
          WHERE status = 'completed' 
          AND (last_analyzed IS NULL OR last_analyzed < NOW() - INTERVAL '1 month')
-         ORDER BY last_analyzed ASC
+         ORDER BY last_analyzed
          LIMIT $1 OFFSET $2`,
                 [batchSize, offset]
             );

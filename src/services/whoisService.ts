@@ -36,7 +36,7 @@ export class WhoisService {
         };
     }
 
-    private getMockData(domain: string): WhoisData {
+    private getMockData(_domain: string): WhoisData {
         const currentYear = new Date().getFullYear();
         return {
             dateCreated: '09.15.97',
