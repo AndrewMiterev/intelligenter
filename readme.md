@@ -7,8 +7,10 @@
 1. itself server: src\server.ts,  node parameters: --require ts-node/register
 2. itself scheduler: src\scheduler.ts, same node parameters: --require ts-node/register
 
+## Project structure in file: struct.txt
+The task took about 4 hours to write and 2 hours to debug.
 
-# Additional Improvements in the Intelligenter Implementation
+## Additional Improvements in the Intelligenter Implementation
 
 This document describes features and architectural decisions that were implemented beyond the basic requirements of the technical specification to enhance the security, reliability, performance, and maintainability of the system.
 

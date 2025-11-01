@@ -8,7 +8,7 @@ import redisClient from '../utils/redis';
 export class DomainService {
     private virusTotalService: VirusTotalService;
     private whoisService: WhoisService;
-    private cacheTTL: number = 3600; // 1 час в секундах
+    private cacheTTL: number = parseInt(process.env.CACHE_TTL_SECONDS || '3600');
 
     constructor() {
         this.virusTotalService = new VirusTotalService();
@@ -177,7 +177,7 @@ export class DomainService {
         }
     }
 
-    async getDomainsForUpdate(batchSize: number = 50, offset: number = 0): Promise<Domain[]> {
+    async getDomainsForUpdate(batchSize: number = parseInt(process.env.BATCH_SIZE || '50'), offset: number = 0): Promise<Domain[]> {
         const client = await pool.connect();
         try {
             const result = await client.query(

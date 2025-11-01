@@ -7,7 +7,8 @@ const logger = pino({
         options: {
             colorize: true
         }
-    }
+    },
+    redact: ['error.stack', 'req.headers.authorization']  // Filter sensitive
 });
 
 export default logger;

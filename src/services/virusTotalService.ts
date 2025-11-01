@@ -40,8 +40,12 @@ export class VirusTotalService {
 
             return this.parseVirusTotalData(response.data);
         } catch (error) {
-            logger.error('VirusTotal API error', { error });
-            return this.getMockData(domain);
+            logger.error('VirusTotal API error', {error});
+            if (process.env.MOCK_MODE === 'true') {
+                logger.warn('Using mock VT data');
+                return this.getMockData(domain);
+            }
+            throw error;  // Let upper handle
         }
     }
 

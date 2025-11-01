@@ -16,8 +16,11 @@ export class WhoisService {
                 attempts++;
                 logger.warn(`Whois retry attempt ${attempts}/${maxRetries}`, { error });
                 if (attempts >= maxRetries) {
-                    logger.error('Whois analysis failed after retries', { error });
-                    return this.getMockData(domain);
+                    logger.error('Whois analysis failed after retries', {error});
+                    if (process.env.MOCK_MODE === 'true') {
+                        return this.getMockData(domain);
+                    }
+                    throw error;
                 }
                 await new Promise(resolve => setTimeout(resolve, backoff(attempts)));
             }

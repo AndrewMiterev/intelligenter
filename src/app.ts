@@ -10,6 +10,11 @@ export const createApp = () => {
 
     // CORS
     app.use(cors({ origin: '*' }));  // ??? Configure as needed
+    // app.use(cors({
+    //        origin: process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://your-production-domain.com',
+    //        methods: ['GET', 'POST'],
+    //        allowedHeaders: ['X-API-KEY', 'Content-Type']
+    // }));
 
     // Middleware security
     app.use(helmet());

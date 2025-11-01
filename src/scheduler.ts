@@ -24,7 +24,7 @@ class Scheduler {
     private async updateDomains() {
         try {
             let offset = 0;
-            const batchSize = 50;
+            const batchSize = parseInt(process.env.BATCH_SIZE || '50');
             let domains: any[] = [];
 
             do {
@@ -36,7 +36,7 @@ class Scheduler {
                         await this.domainService.createOrUpdateDomain(domain.domain_name);
                         logger.info(`Scheduled update for domain: ${domain.domain_name}`);
                         // Задержка для rate limiting
-                        await new Promise(resolve => setTimeout(resolve, 2000));
+                        await new Promise(resolve => setTimeout(resolve, parseInt(process.env.UPDATE_DELAY_MS || '2000')));
                     } catch (error) {
                         logger.error(`Failed to update domain ${domain.domain_name}`, {error});
                     }
