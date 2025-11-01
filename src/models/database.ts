@@ -17,35 +17,60 @@ export const initializeDatabase = async () => {
     try {
         // Create domains table
         await client.query(`
-      CREATE TABLE IF NOT EXISTS domains (
-        id SERIAL PRIMARY KEY,
-        domain_name VARCHAR(255) UNIQUE NOT NULL,
-        status VARCHAR(50) NOT NULL DEFAULT 'pending',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        last_analyzed TIMESTAMP,
-        vt_data JSONB,
-        whois_data JSONB
-      )
-    `);
+            CREATE TABLE IF NOT EXISTS domains (
+                id SERIAL PRIMARY KEY,
+                domain_name VARCHAR(253) UNIQUE NOT NULL,
+                status VARCHAR(50) NOT NULL DEFAULT 'pending',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                last_analyzed TIMESTAMP,
+                vt_data JSONB,
+                whois_data JSONB,
+                analysis_count INTEGER DEFAULT 0,
+                last_error TEXT
+                )
+        `);
 
-        // index on last_analyzed
+        // Improved indexes
         await client.query(`
             CREATE INDEX IF NOT EXISTS idx_domains_last_analyzed
                 ON domains (last_analyzed) WHERE status = 'completed';
         `);
 
+        await client.query(`
+            CREATE INDEX IF NOT EXISTS idx_domains_status
+                ON domains (status)
+        `);
+
+        await client.query(`
+            CREATE INDEX IF NOT EXISTS idx_domains_updated 
+            ON domains (updated_at)
+        `);
+
+
         // Create requests table
         await client.query(`
-      CREATE TABLE IF NOT EXISTS requests (
-        id SERIAL PRIMARY KEY,
-        domain_name VARCHAR(255) NOT NULL,
-        request_type VARCHAR(10) NOT NULL,
-        ip_address INET,
-        user_agent TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
+            CREATE TABLE IF NOT EXISTS requests (
+                id SERIAL PRIMARY KEY,
+                domain_name VARCHAR(253) NOT NULL,
+                request_type VARCHAR(10) NOT NULL,
+                ip_address INET,
+                user_agent TEXT,
+                response_status INTEGER,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+        `);
+
+        // Index for requests
+        await client.query(`
+            CREATE INDEX IF NOT EXISTS idx_requests_domain 
+            ON requests (domain_name)
+        `);
+
+        await client.query(`
+            CREATE INDEX IF NOT EXISTS idx_requests_created 
+            ON requests (created_at)
+        `);
 
         logger.info('Database initialized successfully');
     } catch (error) {

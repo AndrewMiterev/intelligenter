@@ -78,8 +78,11 @@ export class DomainService {
         try {
             await client.query('BEGIN');
 
+            // Use NOW() - INTERVAL for lock timeout
             const existingResult = await client.query(
-                'SELECT * FROM domains WHERE domain_name = $1 FOR UPDATE',
+                `SELECT * FROM domains 
+                 WHERE domain_name = $1 
+                 FOR UPDATE SKIP LOCKED`,
                 [domainName]
             );
 
@@ -88,15 +91,23 @@ export class DomainService {
             if (existingResult.rows.length > 0) {
                 domain = existingResult.rows[0];
 
-                if (domain.status === 'analyzing') {
+                // Prevent repeated analysis of the same domain within 1 hour
+                if (domain.status === 'analyzing' && domain.updated_at !== undefined &&
+                    domain.updated_at > new Date(Date.now() - 60 * 60 * 1000)) {
                     await client.query('ROLLBACK');
-                    return { domain: domainName, status: 'onAnalysis' };
+                    return {
+                        domain: domainName,
+                        status: 'onAnalysis',
+                        message: 'Analysis already in progress'
+                    };
                 }
 
                 await client.query(
-                    `UPDATE domains 
-           SET status = 'analyzing', updated_at = CURRENT_TIMESTAMP 
-           WHERE domain_name = $1`,
+                    `UPDATE domains
+                     SET status = 'analyzing',
+                         updated_at = CURRENT_TIMESTAMP,
+                         analysis_count = analysis_count + 1
+                     WHERE domain_name = $1`,
                     [domainName]
                 );
             } else {
