@@ -4,8 +4,8 @@
 3. local redis installation: via docker. File docker-compose.yaml attached.
 
 ## How to run:
-1. itself server: src\server.ts,  node parameters: --require ts-node/register
-2. itself scheduler: src\scheduler.ts, same node parameters: --require ts-node/register
+1. server itself: src\server.ts,  node parameters: --require ts-node/register
+2. scheduler itself: src\scheduler.ts, same node parameters: --require ts-node/register
 
 ## Project structure in file: struct.txt
 The task took about 4 hours to write and 2 hours to debug.
