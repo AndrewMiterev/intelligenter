@@ -10,7 +10,7 @@ export class DomainController {
 
         try {
             const domain = req.query.domain as string;
-            logger.debug(`Get Domain Controller $somw {domain}`);
+            logger.debug(`Get Domain Controller ${domain}`);
 
             if (!domain) {
                 return res.status(400).json({ error: 'Domain parameter is required' });

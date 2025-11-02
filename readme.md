@@ -8,7 +8,7 @@
 2. scheduler itself: src\scheduler.ts, same node parameters: --require ts-node/register
 
 ## Project structure in file: struct.txt
-The task took about 3-4 hours to write and 2 hours to debug.
+The task took about 3 hours to write and 2 hours to debug.
 
 ## Additional Improvements in the Intelligenter Implementation
 
